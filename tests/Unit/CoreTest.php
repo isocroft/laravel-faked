@@ -28,14 +28,19 @@ final class CoreTest extends TestCase
             packageConfig: require __DIR__ . '/../fixtures/laravel-fake-config.php',
             request: require __DIR__ . '/../fixtures/laravel-fake-request.php',
         );
+
+        // Let package code that references the app's models resolve to the fakes.
+        if (!class_exists('App\\Models\\User', false)) {
+            class_alias(FakeUser::class, 'App\\Models\\User');
+        }
     }
  
     public function test_config_helper_reads_and_writes_package_config(): void
     {
         $this->assertSame('type_id', config('package.type.column_key'));
         $this->assertSame('slug_id', config('package.user.id_name'));
-        $this->assertNull(config('palie.nope'));
-        $this->assertSame('fallback', config('palie.nope', 'fallback'));
+        $this->assertNull(config('package.nope'));
+        $this->assertSame('fallback', config('package.nope', 'fallback'));
     }
  
     public function test_user_fake_behaves_like_app_models_user(): void
