@@ -7,7 +7,7 @@ use LaravelFaked\DataSource\FakeModel;
 /** Test double for App\Models\User (Authenticatable + the package's tenant/active-column API). */
 class FakeUser extends FakeModel
 {
-    protected ?string $table = 'users';
+    protected ?string $table = 'tbl_users';
     protected array $fillable = ['name', 'email', 'password', 'is_active'];
     protected array $hidden = ['password', 'remember_token'];
     protected array $casts = [
