@@ -1,7 +1,10 @@
 <?php
 
 return [
-  'hello' =>  'hi!'
+  'hello' =>  'hi!',
+  'route_guard' => [
+    'json_error' => "error: ..."
+  ]
 ];
 
 ?>
