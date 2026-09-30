@@ -2,16 +2,16 @@
  
 declare(strict_types=1);
  
-namespace Core\Component\Utility;
+namespace LaravelFaked\Core\Component\Utility;
 
-use Helpers\Support;
+use LaravelFaked\Helpers\Support;
  
 /** In-memory stand-in for Illuminate\Session\Store (array driver semantics, incl. flash aging). */
 class FakeSessionStore
 {
     protected array $attributes = [];
     protected bool $started = false;
-    protected string $id;
+    protected string $id = '';
  
     public function __construct(protected string $name = 'laravel_session', ?string $id = null)
     {
