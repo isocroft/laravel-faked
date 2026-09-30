@@ -23,6 +23,10 @@ require_once __DIR__ . '/DataSource/FakeModel.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeHeaderBag.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeParameterBag.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeRequest.php';
+require_once __DDIR__ . '/Http/Lifecycle/Concerns/FakeResponse.php';
+require_once __DIR__ . '/Http/Lifecycle/FakeJsonRespose.php';
+require_once __DIR__ . '/Http/Lifecycle/FakeRedirectResponse.php';
+require_once __DIR__ . '/Http/Lifecycle/FakeHttpException.php';
 require_once __DIR__ . '/Http/Routing/FakeRedirector.php';
 require_once __DIR__ . '/Http/Routing/FakeRoute.php';
 require_once __DIR__ . '/_functions.php';
@@ -35,4 +39,5 @@ if (is_file($autoload)) {
 }
 
 unset($autoload);
+
 ?>
