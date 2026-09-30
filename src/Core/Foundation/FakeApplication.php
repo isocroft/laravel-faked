@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\Foundation;
+namespace LaravelFaked\Core\Foundation;
  
 /**
  * Tiny container standing in for Illuminate\Foundation\Application.
