@@ -40,7 +40,7 @@ final class FakeLaravel
      */
     public static function boot(
         array $packageConfig = [],
-        string $configNamespace = 'palie',
+        string $configNamespace = 'package',
         ?FakeRequest $request = null,
         array $extraConfig = [],
     ): FakeApplication {
@@ -51,7 +51,7 @@ final class FakeLaravel
  
         $app->instance('app', $app);
         $app->instance('config', new FakeConfig(array_replace_recursive(
-            ['app' => ['env' => 'testing', 'url' => 'http://localhost'], $configNamespace => $packageConfig],
+            ['app' => ['env' => 'testing', 'url' => 'http://localhost'], 'cache' => [], 'session' => [], 'cookie' => [], $configNamespace => $packageConfig],
             $extraConfig,
         )));
         $app->instance('events', new FakeEventDispatcher($app));
