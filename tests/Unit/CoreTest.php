@@ -26,7 +26,7 @@ final class CoreTest extends TestCase
     {
         $this->bootFakeLaravel(
             packageConfig: require __DIR__ . '/../fixtures/laravel-fake-config.php',
-            request: require __DIR__ . '/../fixtures/laravel-fakerequest.php',
+            request: require __DIR__ . '/../fixtures/laravel-fake-request.php',
         );
     }
  
@@ -117,7 +117,7 @@ final class CoreTest extends TestCase
     public function test_session_and_redirects(): void
     {
         session(['type' => 'abc']);
-        $this->assertSame('abc', session('tenant'));
+        $this->assertSame('abc', session('type'));
  
         $redirect = redirect('/login')->with('status', 'Please sign in');
         $this->assertInstanceOf(FakeRedirectResponse::class, $redirect);
@@ -129,9 +129,9 @@ final class CoreTest extends TestCase
         session()->save(); // end of request 2: flash gone
         $this->assertNull(session('status'));
  
-        redirect()->defineRoute('tenants.show', 'tenants/{tenant}');
-        $org = FakeOrganization::create(['name' => 'Acme']);
-        redirect()->route('tenants.show', $org)->assertRedirect('/tenants/' . $org->getRouteKey());
+        redirect()->defineRoute('user.show', 'user/{id}');
+        $user = FakeUser::create(['full_name' => 'Gideon Agboola']);
+        redirect()->route('user.show', $org)->assertRedirect('/user/' . $user->getRouteKey());
     }
  
     public function test_events_spy_and_fake(): void
