@@ -2,7 +2,7 @@
  
 declare(strict_types=1);
  
-namespace Helpers;
+namespace LaravelFaked\Helpers;
  
 /**
  * Minimal stand-ins for Illuminate\Support\Arr / Str / data_get so the fakes
@@ -15,7 +15,7 @@ final class Support
         return $value instanceof \Closure ? $value(...$args) : $value;
     }
  
-    /** Dot-notation read over arrays, ArrayAccess and plain objects (like data_get()). */
+    /* @HINT: dot-notation read over arrays, ArrayAccess and plain objects (like data_get()). */
     public static function dataGet(mixed $target, string|int|null $key, mixed $default = null): mixed
     {
         if ($key === null) {
@@ -41,7 +41,7 @@ final class Support
         return $target;
     }
  
-    /** Dot-notation write (like Arr::set()). */
+    /* @HINT: dot-notation write (like Arr::set()). */
     public static function arraySet(array &$array, string|int $key, mixed $value): void
     {
         $segments = explode('.', (string) $key);
@@ -60,7 +60,7 @@ final class Support
         $current[array_shift($segments)] = $value;
     }
  
-    /** Dot-notation existence check (like Arr::has() for a single key). */
+    /* @HINT: dot-notation existence check (like Arr::has() for a single key). */
     public static function arrayHas(array $array, string|int $key): bool
     {
         if (array_key_exists($key, $array)) {
@@ -72,7 +72,7 @@ final class Support
         return self::dataGet($array, $key, $missing) !== $missing;
     }
  
-    /** Dot-notation removal (like Arr::forget() for a single key). */
+    /* @HINT: dot-notation removal (like Arr::forget() for a single key). */
     public static function arrayForget(array &$array, string|int $key): void
     {
         if (array_key_exists($key, $array)) {
@@ -96,7 +96,7 @@ final class Support
         unset($current[$last]);
     }
  
-    /** Wildcard match (like Str::is()). */
+    /* @HINT: wildcard match (like Str::is()). */
     public static function strIs(string $pattern, string $value): bool
     {
         if ($pattern === $value) {
@@ -120,7 +120,7 @@ final class Support
         return strtolower((string) preg_replace('/(?<!^)[A-Z]/', '_$0', $value));
     }
  
-    /** Naive pluralisation, good enough for default table names. */
+    /* @HINT: Naive pluralisation, good enough for default table names. */
     public static function pluralSnake(string $value): string
     {
         $snake = self::snake($value);
@@ -155,14 +155,12 @@ final class Support
         return $id;
     }
  
-    /* @INFO: Fails through PHPUnit when available so it's reported as a normal assertion failure. */
-    public static function fail(string $message): never
+    /* @INFO: reports with a normal assertion failure upon invariant condition check. */
+    public static function invariant(bool $condition, string $message): never
     {
-        if (class_exists(\PHPUnit\Framework\Assert::class)) {
-            \PHPUnit\Framework\Assert::fail($message);
+        if (!$condition) {
+            throw new \AssertionError($message);
         }
- 
-        throw new \AssertionError($message);
     }
  
     /* @INFO: Counts a passed assertion in PHPUnit (so tests using only fake assertions aren't "risky"). */
