@@ -48,28 +48,28 @@ final class CoreTest extends TestCase
         $this->assertTrue($user->exists);
         $this->assertTrue($user->incrementing);
         $this->assertSame('tbl_users', $user->getTableName());
-        $this->assertSame('slug_id', $user->getRouteKeyName());
+        $this->assertSame('id', $user->getRouteKeyName());
         $this->assertSame('is_active', $user->getUserActiveColumnName());
         $this->assertSame('bool', $user->getUserActiveColumnType());
         $this->assertTrue($user->isActive());
         $this->assertTrue(password_verify('secret', $user->getAuthPassword()));
         $this->assertArrayNotHasKey('password', $user->toArray());
  
-        $user->name = 'Jane Doe';
+        $user->name = 'Onyi Deborah';
         $this->assertTrue($user->isDirty('name'));
         $user->save();
-        $this->assertSame('Jane Doe', FakeUser::find(1)?->name);
+        $this->assertSame('Onyi Deborah', FakeUser::find(1)?->name);
     }
  
     public function test_auth_and_request_user_resolver(): void
     {
-        $user = FakeUser::create(['name' => 'A', 'email' => 'a@x.test', 'password' => 'secret']);
+        $user = FakeUser::create(['name' => 'Amin Taminu', 'email' => 'amin.tam@xgraph.test', 'password' => 'secret']);
  
         $this->assertTrue(auth()->guest());
         $this->assertNull(request()->user());
  
-        $this->assertFalse(auth()->attempt(['email' => 'a@x.test', 'password' => 'wrong']));
-        $this->assertTrue(auth()->attempt(['email' => 'a@x.test', 'password' => 'secret']));
+        $this->assertFalse(auth()->attempt(['email' => 'amin.tam@xgraph.test', 'password' => 'wrong']));
+        $this->assertTrue(auth()->attempt(['email' => 'amin.tam@xgraph.test', 'password' => 'secret']));
  
         $this->assertTrue(auth()->check());
         $this->assertSame(1, auth()->id());
@@ -100,7 +100,7 @@ final class CoreTest extends TestCase
         $this->assertSame('abc', request('type'));
         $this->assertTrue(request()->expectsJson());
         $this->assertTrue(request()->routeIs('type.*'));
-        $this->assertTrue(request()->is('listings/*'));
+        $this->assertTrue(request()->is('/listings/*'));
     }
  
     public function test_response_helpers(): void
