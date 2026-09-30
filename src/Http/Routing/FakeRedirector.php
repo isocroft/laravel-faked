@@ -1,9 +1,9 @@
 <?php
 
-namespace Http\Routing;
+namespace LaravelFaked\Http\Routing;
 
-use Core\Foundation\FakeApplication;
-use Http\Lifecycle\FakeRedirectResponse;
+use LaravelFaked\Core\Foundation\FakeApplication;
+use LaravelFaked\Http\Lifecycle\FakeRedirectResponse;
 
 /** Stand-in for Illuminate\Routing\Redirector (plus a tiny named-route table). */
 class FakeRedirector
