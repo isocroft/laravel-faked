@@ -3,6 +3,7 @@
 namespace Http\Routing;
 
 use Core\Foundation\FakeApplication;
+use Http\Lifecycle\FakeRedirectResponse;
 
 /** Stand-in for Illuminate\Routing\Redirector (plus a tiny named-route table). */
 class FakeRedirector
@@ -12,6 +13,7 @@ class FakeRedirector
     protected array $routes = [];
 
     /* @HINT: app container */
+    /** @var FakeApplication */
     protected FakeApplication $app;
  
     public function __construct(FakeApplication $app)
