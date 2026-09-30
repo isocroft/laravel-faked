@@ -4,9 +4,9 @@ declare(strict_types=1);
  
 namespace Tests\Fakes;
 
-use Core\Foundation\FakeApplication;
+use LaravelFaked\Core\Foundation\FakeApplication;
 
-use Helpers\Support;
+use LaravelFaked\Helpers\Support;
  
 class FakeModelNotFoundException extends \RuntimeException
 {
