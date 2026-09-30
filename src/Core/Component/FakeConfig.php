@@ -2,9 +2,9 @@
  
 declare(strict_types=1);
  
-namespace Core\Component;
+namespace LaravelFaked\Core\Component;
 
-use Helpers\Support;
+use LaravelFaked\Helpers\Support;
  
 /** Stand-in for Illuminate\Config\Repository. */
 class FakeConfig implements \ArrayAccess
