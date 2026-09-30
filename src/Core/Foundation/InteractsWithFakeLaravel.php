@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LaravelFaked\Core\Foundation;
 
 use LaravelFaked\Helpers\Support;
