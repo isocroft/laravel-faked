@@ -2,21 +2,21 @@
  
 declare(strict_types=1);
  
-namespace Core\Foundation;
+namespace LaravelFaked\Core\Foundation;
 
-use Http\Lifecycle\FakeRequest;
-use Http\Lifecycle\FakeResponseFactory;
+use LaravelFaked\Http\Lifecycle\FakeRequest;
+use LaravelFaked\Http\Lifecycle\FakeResponseFactory;
 
-use Core\Component\FakeConfig;
-use Core\Component\Utility\FakeSessionStore;
-use Core\Component\Utility\FakeEventDispatcher;
-use Core\Component\Utility\FakeAuthManager;
+use LaravelFaked\Core\Component\FakeConfig;
+use LaravelFaked\Core\Component\Utility\FakeSessionStore;
+use LaravelFaked\Core\Component\Utility\FakeEventDispatcher;
+use LaravelFaked\Core\Component\Utility\FakeAuthManager;
 
-use Http\Routing\FakeRedirector;
+use LaravelFaked\Http\Routing\FakeRedirector;
 
-use DataSource\FakeModel;
+use LaravelFaked\DataSource\FakeModel;
 
-use Helpers\Support;
+use LaravelFaked\Helpers\Support;
 
 /**
  * Builds a fresh fake "Laravel app" and makes it the global instance behind the helpers.
@@ -27,6 +27,7 @@ final class FakeLaravel
     /** Contract/class names that package code may resolve via app(...), mapped to fake services. */
     private const ALIASES = [
         'config' => ['Illuminate\\Config\\Repository', 'Illuminate\\Contracts\\Config\\Repository', FakeConfig::class],
+        'cache' => [],
         'request' => ['Illuminate\\Http\\Request', FakeRequest::class],
         'session' => ['session.store', 'Illuminate\\Session\\Store', 'Illuminate\\Contracts\\Session\\Session', FakeSessionStore::class],
         'auth' => ['Illuminate\\Auth\\AuthManager', 'Illuminate\\Contracts\\Auth\\Factory', FakeAuthManager::class],
@@ -99,68 +100,6 @@ final class FakeLaravel
     {
         FakeModel::flushStore();
         FakeApplication::setInstance(null);
-    }
-}
- 
-/* @NOTE: Drop into a PHPUnit TestCase: call $this->bootFakeLaravel() in setUp(). */
-trait InteractsWithFakeLaravel
-{
-    protected FakeApplication $app;
- 
-    protected function bootFakeLaravel(array $packageConfig = [], string $configNamespace = 'package', ?FakeRequest $request = null): FakeApplication
-    {
-        return $this->app = FakeLaravel::boot($packageConfig, $configNamespace, $request);
-    }
-
-    protected function releaseFakeLaravel(): void
-    {
-        if (isset($this->app)) {
-            unset($this->app);
-        }
-
-        FakeLaravel::reset();
-    }
- 
-    protected function actingAs(object $user, ?string $guard = null): static
-    {
-        $this->app->make('auth')->actingAs($user, $guard);
- 
-        return $this;
-    }
- 
-    protected function withRoute(FakeRoute $route): static
-    {
-        $this->app->make('request')->setRoute($route);
- 
-        return $this;
-    }
-
-    /* ---- test assertions: session ------------------------------------------------- */
- 
-    public function assertInSession(string $key, mixed $value = null): static
-    {
-        if ($this->app->make('session')->missing($key)) {
-            Support::fail("Session is missing expected key [{$key}].");
-        }
- 
-        if (func_num_args() > 1 && $this->app->make('session')->get($key) != $value) {
-            Support::fail("Session key [{$key}] does not match the expected value.");
-        }
- 
-        Support::pass();
- 
-        return $this;
-    }
- 
-    public function assertNotInSession(string $key): static
-    {
-        if ($this->app->make('session')->exists($key)) {
-            Support::fail("Session has unexpected key [{$key}].");
-        }
- 
-        Support::pass();
- 
-        return $this;
     }
 }
 
