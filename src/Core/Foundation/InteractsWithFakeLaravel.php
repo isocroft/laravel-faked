@@ -115,8 +115,10 @@ trait InteractsWithFakeLaravel
  
     public function assertStatus(int $status): static
     {
-        if ($this->app->make('response.factory')->statusCode !== $status) {
-            $this->fail("Expected response status code [{$status}] but received {$this->statusCode}.");
+        $statusCode = $this->app->make('response.factory')->getStatusCode();
+        
+        if ($statusCode !== $status) {
+            $this->fail("Expected response status code [{$status}] but received {$statusCode}.");
         }
  
         $this->assertTrue(true);
@@ -190,7 +192,7 @@ trait InteractsWithFakeLaravel
     public function assertRedirect(?string $uri = null): static
     {
         if (!$this->app->make('response.factory')->isRedirect()) {
-            $this->fail("Response status code [{$this->app->make('response.factory')->statusCode}] is not a redirect status code.");
+            $this->fail("Response status code [{$this->app->make('response.factory')->getStatusCode()}] is not a redirect status code.");
         }
  
         if ($uri !== null) {
