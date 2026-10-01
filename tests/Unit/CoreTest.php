@@ -10,6 +10,7 @@ use LaravelFaked\Http\Routing\FakeHttpException;
 use LaravelFaked\Http\Lifecycle\FakeJsonResponse;
 use LaravelFaked\Core\Foundation\FakeLaravel;
 
+use LaravelFaked\Http\Lifecycle\FakeHttpException;
 use LaravelFaked\Http\Lifecycle\FakeRedirectResponse;
 use LaravelFaked\Http\Lifecycle\FakeRequest;
 use LaravelFaked\Http\Routing\FakeRoute;
@@ -32,6 +33,10 @@ final class CoreTest extends TestCase
         // Let package code that references the app's models resolve to the fakes.
         if (!class_exists('App\\Models\\User', false)) {
             class_alias(FakeUser::class, 'App\\Models\\User');
+        }
+
+        if (!class_exists('Illuminate\\Http\\HttpException', false)) {
+            class_alias(FakeHttpException::class, 'Illuminate\\Http\\HttpException');
         }
     }
  
@@ -79,7 +84,7 @@ final class CoreTest extends TestCase
         $this->assertTrue(auth()->check());
         $this->assertSame(1, auth()->id());
         $this->assertTrue(request()->user()->is($user));
-        app('events')->assertDispatched('Illuminate\\Auth\\Events\\Login');
+        $this->assertDispatched('Illuminate\\Auth\\Events\\Login');
  
         auth()->logout();
         $this->assertNull(request()->user());
@@ -114,7 +119,8 @@ final class CoreTest extends TestCase
  
         $json = response()->json($body, 403);
         $this->assertInstanceOf(FakeJsonResponse::class, $json);
-        $json->assertForbidden()->assertJson(['message' => 'Access Denied']);
+        $this->assertForbidden($json);
+        $this->assertJson($json, ['message' => 'Access Denied']);
  
         response(config('package.route_guard.text_error'), 403)->assertForbidden()->assertSee('Access Denied');
     }
@@ -126,7 +132,7 @@ final class CoreTest extends TestCase
  
         $redirect = redirect('/login')->with('status', 'Please sign in');
         $this->assertInstanceOf(FakeRedirectResponse::class, $redirect);
-        $redirect->assertRedirect('/login');
+        $this->assertRedirect($redirect, '/login');
         $this->assertInSession('status', 'Please sign in');
  
         session()->save(); // end of request 1: flash survives
@@ -152,8 +158,8 @@ final class CoreTest extends TestCase
         app('events')->fake();
         event('tenant.switched', ['def']);
         $this->assertSame(['abc'], $seen); // listener not run while faking
-        app('events')->assertDispatchedTimes('type.switched', 2);
-        app('events')->assertDispatched('type.switched', fn (string $id) => $id === 'def');
+        $this->assertDispatchedTimes('type.switched', 2);
+        $this->assertDispatched('type.switched', fn (string $id) => $id === 'def');
     }
  
     public function test_abort_throws_http_exception(): void
