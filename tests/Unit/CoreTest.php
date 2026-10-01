@@ -140,9 +140,10 @@ final class CoreTest extends TestCase
         session()->save(); // end of request 2: flash gone
         $this->assertNull(session('status'));
  
-        redirect()->defineRoute('user.show', 'user/{id}');
-        $user = FakeUser::create(['full_name' => 'Gideon Agboola']);
-        redirect()->route('user.show', $org)->assertRedirect('/user/' . $user->getRouteKey());
+        $routeRedirect = redirect()->defineRoute('user.show', 'user/{id}');
+        $user = FakeUser::create(['name' => 'Gideon Agboola']);
+        $routeRedirect->route('user.show', $user);
+        $this->assertRedirect($routeRedirect, '/user/' . $user->getRouteKey());
     }
  
     public function test_events_spy_and_fake(): void
