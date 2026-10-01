@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace LaravelFaked\Core\Foundation;
 
+use LaravelFaked\Http\Lifecycle\Concerns\FakeResponse;
+
 use LaravelFaked\Helpers\Support;
 
 /* @NOTE: Drop into a PHPUnit TestCase: call `$this->bootFakeLaravel()` in `$testCase->setUp()` and call `$this->releaseFakeLaravel()` in `$testCase->tearDown()`. */
@@ -113,9 +115,9 @@ trait InteractsWithFakeLaravel
 
     /* ---- test assertions: response ------------------------------------------------- */
  
-    public function assertStatus(int $status): static
+    public function assertStatus(FakeResponse $response, int $status): static
     {
-        $statusCode = $this->app->make('response.factory')->getStatusCode();
+        $statusCode = $response->getStatusCode();
         
         if ($statusCode !== $status) {
             $this->fail("Expected response status code [{$status}] but received {$statusCode}.");
@@ -124,33 +126,33 @@ trait InteractsWithFakeLaravel
         $this->assertTrue(true);
     }
  
-    public function assertOk(): static
+    public function assertOk(FakeResponse $response): static
     {
-        return $this->assertStatus(200);
+        return $this->assertStatus($response, 200);
     }
  
-    public function assertUnauthorized(): static
+    public function assertUnauthorized(FakeResponse $response): static
     {
-        return $this->assertStatus(401);
+        return $this->assertStatus($response, 401);
     }
  
-    public function assertForbidden(): static
+    public function assertForbidden(FakeResponse $response): static
     {
-        return $this->assertStatus(403);
+        return $this->assertStatus($response, 403);
     }
  
-    public function assertNotFound(): static
+    public function assertNotFound(FakeResponse $response): static
     {
-        return $this->assertStatus(404);
+        return $this->assertStatus($response, 404);
     }
  
-    public function assertHeader(string $name, ?string $value = null): static
+    public function assertHeader(FakeResponse $response, string $name, ?string $value = null): static
     {
-        if (!$this->app->make('response.factory')->headers->has($name)) {
+        if (!$response->headers->has($name)) {
             $this->fail("Header [{$name}] not present on response.");
         }
 
-        $headerValue = $this->app->make('response.factory')->headers->get($name);
+        $headerValue = $response->headers->get($name);
         
         if ($value !== null && $headerValue !== $value) {
             $this->fail("Header [{$name}] was found, but value [{$headerValue}] does not match [{$value}].");
@@ -159,9 +161,9 @@ trait InteractsWithFakeLaravel
         $this->assertTrue(true);
     }
  
-    public function assertSee(string $value): static
+    public function assertSee(FakeResponse $response, string $value): static
     {
-        if (!str_contains($this->app->make('response.factory')->getContent(), $value)) {
+        if (!str_contains($response->getContent(), $value)) {
             $this->fail("Failed asserting that the response contains [{$value}].");
         }
  
@@ -169,9 +171,9 @@ trait InteractsWithFakeLaravel
     }
  
     /** Asserts that every key (dot-notation) in $subset exists in the JSON body with an equal value. */
-    public function assertJson(array $subset): static
+    public function assertJson(FakeResponse $response, array $subset): static
     {
-        $decoded = json_decode($this->app->make('response.factory')->getContent(), true);
+        $decoded = json_decode($response->getContent(), true);
  
         if (!is_array($decoded)) {
             $this->fail("Response content is not valid JSON.");
@@ -189,14 +191,14 @@ trait InteractsWithFakeLaravel
         $this->assertTrue(true);
     }
  
-    public function assertRedirect(?string $uri = null): static
+    public function assertRedirect(FakeResponse $response, ?string $uri = null): static
     {
-        if (!$this->app->make('response.factory')->isRedirect()) {
-            $this->fail("Response status code [{$this->app->make('response.factory')->getStatusCode()}] is not a redirect status code.");
+        if (!$response->isRedirect()) {
+            $this->fail("Response status code [{$response->getStatusCode()}] is not a redirect status code.");
         }
  
         if ($uri !== null) {
-            $location = (string) $this->app->make('response.factory')->headers->get('Location', '');
+            $location = (string) $response->headers->get('Location', '');
             $samePath = '/' . ltrim((string) parse_url($location, PHP_URL_PATH), '/')
                 === '/' . ltrim((string) parse_url($uri, PHP_URL_PATH), '/');
  
