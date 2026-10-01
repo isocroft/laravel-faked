@@ -110,6 +110,101 @@ trait InteractsWithFakeLaravel
  
         $this->assertTrue(true);
     }
+
+    /* ---- test assertions: response ------------------------------------------------- */
+ 
+    public function assertStatus(int $status): static
+    {
+        if ($this->app->make('response.factory')->statusCode !== $status) {
+            $this->fail("Expected response status code [{$status}] but received {$this->statusCode}.");
+        }
+ 
+        $this->assertTrue(true);
+    }
+ 
+    public function assertOk(): static
+    {
+        return $this->assertStatus(200);
+    }
+ 
+    public function assertUnauthorized(): static
+    {
+        return $this->assertStatus(401);
+    }
+ 
+    public function assertForbidden(): static
+    {
+        return $this->assertStatus(403);
+    }
+ 
+    public function assertNotFound(): static
+    {
+        return $this->assertStatus(404);
+    }
+ 
+    public function assertHeader(string $name, ?string $value = null): static
+    {
+        if (!$this->app->make('response.factory')->headers->has($name)) {
+            $this->fail("Header [{$name}] not present on response.");
+        }
+
+        $headerValue = $this->app->make('response.factory')->headers->get($name);
+        
+        if ($value !== null && $headerValue !== $value) {
+            $this->fail("Header [{$name}] was found, but value [{$headerValue}] does not match [{$value}].");
+        }
+ 
+        $this->assertTrue(true);
+    }
+ 
+    public function assertSee(string $value): static
+    {
+        if (!str_contains($this->app->make('response.factory')->getContent(), $value)) {
+            $this->fail("Failed asserting that the response contains [{$value}].");
+        }
+ 
+        $this->assertTrue(true);
+    }
+ 
+    /** Asserts that every key (dot-notation) in $subset exists in the JSON body with an equal value. */
+    public function assertJson(array $subset): static
+    {
+        $decoded = json_decode($this->app->make('response.factory')->getContent(), true);
+ 
+        if (!is_array($decoded)) {
+            $this->fail("Response content is not valid JSON.");
+        }
+ 
+        $missing = new \stdClass();
+        foreach ($subset as $key => $expected) {
+            $actual = Support::dataGet($decoded, $key, $missing);
+ 
+            if ($actual === $missing || $actual != $expected) {
+                $this->fail("Failed asserting JSON key [{$key}] equals " . json_encode($expected) . '.');
+            }
+        }
+ 
+        $this->assertTrue(true);
+    }
+ 
+    public function assertRedirect(?string $uri = null): static
+    {
+        if (!$this->app->make('response.factory')->isRedirect()) {
+            $this->fail("Response status code [{$this->app->make('response.factory')->statusCode}] is not a redirect status code.");
+        }
+ 
+        if ($uri !== null) {
+            $location = (string) $this->app->make('response.factory')->headers->get('Location', '');
+            $samePath = '/' . ltrim((string) parse_url($location, PHP_URL_PATH), '/')
+                === '/' . ltrim((string) parse_url($uri, PHP_URL_PATH), '/');
+ 
+            if ($location !== $uri && !($samePath && !preg_match('#^https?://#', $uri))) {
+                $this->fail("Expected redirect to [{$uri}] but got [{$location}].");
+            }
+        }
+ 
+        $this->assertTrue(true);
+    }
 }
 
 ?>
