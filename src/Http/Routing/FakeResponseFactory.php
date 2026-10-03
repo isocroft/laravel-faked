@@ -2,11 +2,13 @@
 
 declare(strict_type=1);
 
-namespace LaravelFaked\Http\Lifecycle;
+namespace LaravelFaked\Http\Routing;
 
 use LaravelFaked\Core\Foundation\FakeApplication;
 
 use LaravelFaked\Http\Lifecycle\Concerns\FakeResponse;
+use LaravelFaked\Http\Lifecycle\FakeJsonResponse;
+use LaravelFaked\Http\Lifecycle\FakeRedirectResponse;
 
 /** Stand-in for Illuminate\Routing\ResponseFactory (what response() returns with no args). */
 class FakeResponseFactory
