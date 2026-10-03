@@ -40,38 +40,69 @@ public function test_fallback_environment()
 
 namespace Tests\Feature;
 
+use LaravelFaked\Core\Foundation\FakeLaravel;
+use LaravelFaked\Core\Foundation\InteractsWithFakeLaravel;
+
+use LaravelFaked\Http\Routing\FakeRoute;
+
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Foundation\Testing\WithCachedRoutes;
+
+use App\Http\Controllers\UploadsController;
+
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
+    use InteractsWithFakeLaravel;
+    use WithCachedRoutes;
+ 
+    protected function setUp(): void
+    {
+        $this->bootFakeLaravel(
+            packageConfig: [],
+        );
+    }
+
+    protected function tearDown(): void
+    {
+        $this->releaseFakeLaravel();
+    }
+
     public function test_avatars_can_be_uploaded(): void
     {
+        $token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgxMjQ3LCJlbnYiOiJ0NXN0IiwiaWF0IjoxNjI0ODIwNDU3fQ.sw2ortR6Et01U470t12sB9Btp7023SemuKjh8U1Tn57';
 
+        FakeLaravel::setRequest(FakeRequest::createJson('/avatar', 'POST'));
+        $this->withRoute(new FakeRoute('/avatar', [], 'uploads'));
+        
         Storage::fake('avatars');
 
         $file = UploadedFile::fake()->image('avatar.jpg');
 
-        $response = $this->json('POST', '/avatar', [
+        $response = $this->post(action([UploadsController::class, 'store']), [
+            'name' => 'face_card',
             'avatar' => $file,
+        ], [
+            'Content-Type' => 'multipart/form-data',
+            'Authorization' => 'Bearer ' . $token
         ]);
 
-        $response->assertStatus(200);
+        $this->assertStatus($response, 200);
         Storage::disk('avatars')->assertExists($file->hashName());
     }
 
 }
 ```
 >Here is the controller handling the request.
-```
+```php
 <?php
 
 /** No need for a Laravel application server to be booted */
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request; // Uses the fake: `LaravelFaked\\Http\\Lifecycle\\FakeRequest`
 use Illuminate\Http\JsonResponse; // Uses the fake: `LaravelFaked\\Http\\Lifecycle\\FakeJsonRespose`
 
 class UploadsController extends Controller
@@ -79,12 +110,15 @@ class UploadsController extends Controller
     /**
      * Store a newly created avatar in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(): JsonResponse
     {
+        /** @var Request $count */
+        $request Request = request(); // Uses the fake: `LaravelFaked\\Http\\Lifecycle\\FakeRequest`
+        
         $request->validate([
+            'name' => ['required', 'string'],
             'avatar' => ['required', 'image', 'max:2048'],
         ]);
     
