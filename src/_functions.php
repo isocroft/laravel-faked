@@ -7,8 +7,8 @@ declare(strict_types=1);
  * src/Illuminate/Foundation/helpers.php, but resolving from the fake container.
  *
  * Laravel wraps its helpers in function_exists() too, so whichever file loads
- * FIRST wins -> `require_once ./vendor/isocroft/laravel-faked/src/bootstrap.php`
- * BEFORE `require ./vendor/autoload.php`.
+ * FIRST wins -> `require_once './vendor/isocroft/laravel-faked/src/bootstrap.php';`
+ * BEFORE `require './vendor/autoload.php';`.
  */
  
 use LaravelFaked\Core\Foundation\FakeApplication;
@@ -129,6 +129,38 @@ if (!function_exists('event')) {
         return app('events')->dispatch(...$args);
     }
 }
+
+if (!function_exists('action')) {
+    /** URL for a controller action: action([UserController::class, 'show'], ['user' => 1]), action('Ctrl@m'), action(Invokable::class). */
+    function action(string|array $name, mixed $parameters = [], bool $absolute = true): string
+    {
+        return app('router')->toAction($name, $parameters, $absolute);
+    }
+}
+ 
+if (!function_exists('route')) {
+    /** URL for a named route registered on the fake router. */
+    function route(string $name, mixed $parameters = [], bool $absolute = true): string
+    {
+        return app('router')->toRoute($name, $parameters, $absolute);
+    }
+}
+ 
+if (!function_exists('cache')) {
+    /** cache() -> manager; cache('k', $default) -> get; cache(['k' => 'v'], $ttl) -> put. */
+    function cache(array|string|null $key = null, mixed $default = null): mixed
+    {
+        if ($key === null) {
+            return app('cache');
+        }
+ 
+        if (is_array($key)) {
+            return app('cache')->put($key, $default);
+        }
+ 
+        return app('cache')->get($key, $default);
+    }
+}
  
 if (!function_exists('abort')) {
     function abort(int|FakeResponse $code, string $message = '', array $headers = []): never
@@ -163,15 +195,14 @@ if (!function_exists('abort_unless')) {
  * Guard against load-order mistakes: if any helper above was already defined
  * (e.g. by laravel/framework), warn loudly instead of silently using the real one.
  */
-foreach (['app', 'config', 'request', 'response', 'session', 'auth', 'redirect', 'back', 'event', 'abort'] as $helper) {
+foreach (['app', 'config', 'request', 'response', 'session', 'auth', 'redirect', 'back', 'action', 'route', 'cache', 'event', 'abort'] as $helper) {
     if ((new ReflectionFunction($helper))->getFileName() !== __FILE__) {
         trigger_error(
-            "Helper {$helper}() was defined before the fakes loaded; require tests/Fakes/bootstrap.php before vendor/autoload.php.",
+            "Helper {$helper}() was defined before the fakes loaded; `require 'vendor/isocroft/laravel-faked/src/bootstrap.php';` before `require 'vendor/autoload.php';`.",
             E_USER_WARNING,
         );
     }
 }
 
 unset($helper);
-
 ?>
