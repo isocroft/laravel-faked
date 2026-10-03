@@ -20,21 +20,22 @@ require_once __DIR__ . '/Core/Component/Auth/FakeUserProvider.php';
 require_once __DIR__ . '/Core/Component/Auth/FakeGuard.php';
 require_once __DIR__ . '/Core/Component/Auth/FakeAuthManager.php';
 require_once __DIR__ . '/Core/Component/Cache/FakeCacheManager.php';
+require_once __DIR__ . '/Core/Component/Cache/FakeCacheRepository.php';
 require_once __DIR__ . '/Core/Component/Foundation/FakeApplication.php';
-require_once __DIR__ . '/Core/Component/Foundation/FakeLaravel.php';
 require_once __DIR__ . '/Core/Component/Foundation/InteractsWithFakeLaravel.php';
 require_once __DIR__ . '/DataSource/FakeModel.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeHeaderBag.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeParameterBag.php';
+require_once __DIR__ . '/Http/Lifecycle/FakeHttpException.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeRequest.php';
 require_once __DIR__ . '/Http/Lifecycle/Concerns/FakeResponse.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeJsonRespose.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeRedirectResponse.php';
-require_once __DIR__ . '/Http/Lifecycle/FakeHttpException.php';
 require_once __DIR__ . '/Http/Routing/FakeResponseFactory.php';
 require_once __DIR__ . '/Http/Routing/FakeRedirector.php';
 require_once __DIR__ . '/Http/Routing/FakeRouter.php';
 require_once __DIR__ . '/Http/Routing/FakeRoute.php';
+require_once __DIR__ . '/Core/Component/Foundation/FakeLaravel.php';
 require_once __DIR__ . '/_functions.php';
 
 if (!class_exists('Illuminate\\Http\\Exceptions\\HttpResponseException', false)) {
@@ -75,6 +76,10 @@ if (!class_exists('Illuminate\\Auth\\AuthManager', false)) {
 
 if (!class_exists('Illuminate\\Cache\\CacheManager', false)) {
     class_alias(FakeCacheManager::class, 'Illuminate\\Cache\\CacheManager');
+}
+
+if (!class_exists('Illuminate\\Cache\\CacheRepository', false)) {
+    class_alias(FakeCacheRepository::class, 'Illuminate\\Cache\\CacheRepository');
 }
 
 if (!class_exists('Illuminate\\Events\\Dispatcher', false)) {
