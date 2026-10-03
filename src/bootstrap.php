@@ -16,6 +16,10 @@ require_once __DIR__ . '/Helpers/Support.php';
 require_once __DIR__ . '/Core/Component/FakeConfig.php';
 require_once __DIR__ . '/Core/Component/Utility/FakeSessionStore.php';
 require_once __DIR__ . '/Core/Component/Utility/FakeEventDispacther.php';
+require_once __DIR__ . '/Core/Component/Auth/FakeUserProvider.php';
+require_once __DIR__ . '/Core/Component/Auth/FakeGuard.php';
+require_once __DIR__ . '/Core/Component/Auth/FakeAuthManager.php';
+require_once __DIR__ . '/Core/Component/Cache/FakeCacheManager.php';
 require_once __DIR__ . '/Core/Component/Foundation/FakeApplication.php';
 require_once __DIR__ . '/Core/Component/Foundation/FakeLaravel.php';
 require_once __DIR__ . '/Core/Component/Foundation/InteractsWithFakeLaravel.php';
@@ -23,12 +27,13 @@ require_once __DIR__ . '/DataSource/FakeModel.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeHeaderBag.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeParameterBag.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeRequest.php';
-require_once __DDIR__ . '/Http/Lifecycle/Concerns/FakeResponse.php';
+require_once __DIR__ . '/Http/Lifecycle/Concerns/FakeResponse.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeJsonRespose.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeRedirectResponse.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeHttpException.php';
 require_once __DIR__ . '/Http/Routing/FakeResponseFactory.php';
 require_once __DIR__ . '/Http/Routing/FakeRedirector.php';
+require_once __DIR__ . '/Http/Routing/FakeRouter.php';
 require_once __DIR__ . '/Http/Routing/FakeRoute.php';
 require_once __DIR__ . '/_functions.php';
 
@@ -60,6 +65,10 @@ if (!class_exists('Illuminate\\Http\\Request', false)) {
     class_alias(FakeRequest::class, 'Illuminate\\Http\\Request');
 }
 
+if (!class_exists('Illuminate\\Auth\\SessionGuard', false)) {
+    class_alias(FakeGuard::class, 'Illuminate\\Auth\\SessionGuard');
+}
+
 if (!class_exists('Illuminate\\Auth\\AuthManager', false)) {
     class_alias(FakeAuthManager::class, 'Illuminate\\Auth\\AuthManager');
 }
@@ -78,6 +87,10 @@ if (!class_exists('Illuminate\\Session\\Store', false)) {
 
 if (!class_exists('Illuminate\\Database\\Eloquent\\Model', false)) {
     class_alias(FakeModel::class, 'Illuminate\\Database\\Eloquent\\Model');
+}
+
+if (!class_exists('Illuminate\\Routing\\Router', false)) {
+    class_alias(FakeRouter::class, 'Illuminate\\Routing\\Router');
 }
 
 if (!class_exists('Illuminate\\Routing\\Redirector', false)) {
