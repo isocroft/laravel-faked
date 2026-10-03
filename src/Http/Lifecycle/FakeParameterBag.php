@@ -2,7 +2,7 @@
  
 declare(strict_types=1);
  
-namespace Http\Lifecycle;
+namespace LaravelFaked\Http\Lifecycle;
  
 /* Stand-in for parameter bags (Symfony ParameterBag / HeaderBag look-alikes) */
 class FakeParameterBag implements \IteratorAggregate, \Countable
