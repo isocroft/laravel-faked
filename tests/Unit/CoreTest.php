@@ -18,6 +18,11 @@ use LaravelFaked\Http\Routing\FakeRoute;
 use LaravelFaked\Tests\FakeUser;
 
 use LaravelFaked\Core\Foundation\InteractsWithFakeLaravel;
+
+// Let the code that references the app's models resolve to the fakes.
+if (!class_exists('App\\Models\\User', false)) {
+    class_alias(FakeUser::class, 'App\\Models\\User');
+}
  
 final class CoreTest extends TestCase
 {
@@ -29,11 +34,6 @@ final class CoreTest extends TestCase
             packageConfig: require __DIR__ . '/../fixtures/laravel-fake-config.php',
             request: require __DIR__ . '/../fixtures/laravel-fake-request.php',
         );
-
-        // Let package code that references the app's models resolve to the fakes.
-        if (!class_exists('App\\Models\\User', false)) {
-            class_alias(FakeUser::class, 'App\\Models\\User');
-        }
     }
  
     public function test_config_helper_reads_and_writes_package_config(): void
@@ -47,9 +47,9 @@ final class CoreTest extends TestCase
     public function test_user_fake_behaves_like_app_models_user(): void
     {
         $attributes = require __DIR__ . '/../fixtures/laravel-fake-user_attributes.php';
-        $user = FakeUser::create($attributes + ['password' => 'secret']);
+        $user = \App\Models\User::create($attributes + ['password' => 'secret']);
  
-        $this->assertInstanceOf(FakeUser::class, $user);
+        $this->assertInstanceOf(\App\Models\User::class, $user);
         $this->assertSame(1, $user->getKey());
         $this->assertTrue($user->exists);
         $this->assertTrue($user->incrementing);
@@ -69,7 +69,7 @@ final class CoreTest extends TestCase
  
     public function test_auth_and_request_user_resolver(): void
     {
-        $user = FakeUser::create(['name' => 'Amin Taminu', 'email' => 'amin.tam@xgraph.test', 'password' => 'secret']);
+        $user = \App\Models\User::create(['name' => 'Amin Taminu', 'email' => 'amin.tam@xgraph.test', 'password' => 'secret']);
  
         $this->assertTrue(auth()->guest());
         $this->assertNull(request()->user());
@@ -88,7 +88,7 @@ final class CoreTest extends TestCase
  
     public function test_acting_as_on_named_guard(): void
     {
-        $user = FakeUser::make(['name' => 'Api']);
+        $user = \App\Models\User::make(['name' => 'Api']);
         $this->actingAs($user, 'api');
  
         $this->assertSame($user, auth('api')->user());
@@ -114,7 +114,7 @@ final class CoreTest extends TestCase
         $body = config('package.route_guard.json_error');
  
         $json = response()->json($body, 403);
-        $this->assertInstanceOf(FakeJsonResponse::class, $json);
+        $this->assertInstanceOf(\Illuminate\Http\JsonResponse::class, $json);
         $this->assertForbidden($json);
         $this->assertJson($json, ['message' => 'Access Denied']);
  
@@ -129,7 +129,7 @@ final class CoreTest extends TestCase
         $this->assertSame('abc', session('type'));
  
         $redirect = redirect('/login')->with('status', 'Please sign in');
-        $this->assertInstanceOf(FakeRedirectResponse::class, $redirect);
+        $this->assertInstanceOf(\Illuminate\Http\RedirectResponse::class, $redirect);
         $this->assertRedirect($redirect, '/login');
         $this->assertInSession('status', 'Please sign in');
  
@@ -139,7 +139,7 @@ final class CoreTest extends TestCase
         $this->assertNull(session('status'));
  
         $routeRedirect = redirect()->defineRoute('user.show', 'user/{id}');
-        $user = FakeUser::create(['name' => 'Gideon Agboola']);
+        $user = \App\Models\User::create(['name' => 'Gideon Agboola']);
         $routeRedirect->route('user.show', $user);
         $this->assertRedirect($routeRedirect, '/user/' . $user->getRouteKey());
     }
@@ -166,7 +166,7 @@ final class CoreTest extends TestCase
         try {
             abort_unless(auth()->check(), 403, 'Access Denied');
             $this->fail('`abort_unless(...)` did not throw');
-        } catch (FakeHttpException $e) {
+        } catch (\Illuminate\Http\Exceptions\HttpResponseException $e) {
             $this->assertSame(403, $e->getStatusCode());
             $this->assertSame('Access Denied', $e->getMessage());
         }
