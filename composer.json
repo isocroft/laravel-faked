@@ -1,29 +1,34 @@
 {
-    "name": "isocroft/laravel-faked",
-    "description": "A simple library that fakes out all the core components in the suite of Illuminate packages for Laravel v10+",
-    "license": "Apache-2.0",
-    "authors": [
-        {
-            "name": "Ifeora Okechukwu Patrick",
-            "email": "isocroft@gmail.com"
-        }
-    ],
-    "homepage": "https://github.com/isocroft/laravel-faked",
-    "support": {
-        "issues": "https://github.com/isocroft/laravel-faked/issues",
-        "source": "https://github.com/isocroft/laravel-faked"
-    },
-    "require": {
-        "php": "^8.0"
-    },
-    "minimum-stability": "dev",
-    "autoload": {
-        "psr-4": {
-            "LaravelFaked\\": "./src",
-            "LaravelFaked\\Tests\\": "./tests"
-        }
-    },
-    "config": {
-        "sort-packages": true
+  "name": "isocroft/laravel-faked",
+  "description": "A simple library that fakes out all the core components in the suite of Illuminate packages for Laravel v10+",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Ifeora Okechukwu Patrick",
+      "email": "isocroft@gmail.com"
     }
+  ],
+  "homepage": "https://github.com/isocroft/laravel-faked#readme",
+  "support": {
+    "issues": "https://github.com/isocroft/laravel-faked/issues",
+    "source": "https://github.com/isocroft/laravel-faked"
+  },
+  "require": {
+    "php": "^8.2",
+    "illuminate/support":"^12.69.2"
+  },
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "LaravelFaked\\": "./src/",
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "LaravelFaked\\Tests\\": "./tests/"
+    }
+  },
+  "config": {
+    "sort-packages": true
+  }
 }
