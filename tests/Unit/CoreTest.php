@@ -6,7 +6,7 @@ namespace LaravelFaked\Tests\Unit;
  
 use PHPUnit\Framework\TestCase;
 
-use LaravelFaked\Http\Routing\FakeHttpException;
+use LaravelFaked\Http\Routing\FakeResponseFactory;
 use LaravelFaked\Http\Lifecycle\FakeJsonResponse;
 use LaravelFaked\Core\Foundation\FakeLaravel;
 
@@ -33,10 +33,6 @@ final class CoreTest extends TestCase
         // Let package code that references the app's models resolve to the fakes.
         if (!class_exists('App\\Models\\User', false)) {
             class_alias(FakeUser::class, 'App\\Models\\User');
-        }
-
-        if (!class_exists('Illuminate\\Http\\HttpException', false)) {
-            class_alias(FakeHttpException::class, 'Illuminate\\Http\\HttpException');
         }
     }
  
@@ -122,7 +118,9 @@ final class CoreTest extends TestCase
         $this->assertForbidden($json);
         $this->assertJson($json, ['message' => 'Access Denied']);
  
-        response(config('package.route_guard.text_error'), 403)->assertForbidden()->assertSee('Access Denied');
+        $text = response(config('package.route_guard.text_error'), 403);
+        $this->assertForbidden($text);
+        $this->assertSee($text, 'Access Denied');
     }
  
     public function test_session_and_redirects(): void
@@ -167,7 +165,7 @@ final class CoreTest extends TestCase
     {
         try {
             abort_unless(auth()->check(), 403, 'Access Denied');
-            $this->fail('abort_unless did not throw');
+            $this->fail('`abort_unless(...)` did not throw');
         } catch (FakeHttpException $e) {
             $this->assertSame(403, $e->getStatusCode());
             $this->assertSame('Access Denied', $e->getMessage());
