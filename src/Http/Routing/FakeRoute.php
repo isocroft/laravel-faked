@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Http\Routing;
+namespace LaravelFaked\Http\Routing;
 
-use Helpers\Support;
+use LaravelFaked\Helpers\Support;
 
 /** Stand-in for Illuminate\Routing\Route (only what middleware / guards usually touch). */
 class FakeRoute
