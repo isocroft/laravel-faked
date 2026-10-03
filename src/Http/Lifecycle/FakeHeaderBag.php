@@ -1,6 +1,6 @@
 <?php
 
-nnamespace Http\Lifecycle;
+namespace LaravelFaked\Http\Lifecycle;
 
 /** Case-insensitive header bag; "Content_Type" === "content-type". Stores one value per header. */
 class FakeHeaderBag extends FakeParameterBag
