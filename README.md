@@ -60,6 +60,7 @@ class ExampleTest extends TestCase
  
     protected function setUp(): void
     {
+        parent::steUp();
         $this->bootFakeLaravel(
             packageConfig: [],
         );
@@ -68,6 +69,7 @@ class ExampleTest extends TestCase
     protected function tearDown(): void
     {
         $this->releaseFakeLaravel();
+        parent::tearDown();
     }
 
     public function test_avatars_can_be_uploaded(): void
