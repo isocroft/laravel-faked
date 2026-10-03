@@ -15,6 +15,8 @@ use LaravelFaked\Core\Foundation\FakeApplication;
 
 use LaravelFaked\Http\Lifecycle\FakeHttpException;
 use LaravelFaked\Http\Lifecycle\FakeResponse;
+
+use LaravelFaked\Helpers\Support;
  
 if (!function_exists('app')) {
     function app(?string $abstract = null, array $parameters = []): mixed
@@ -57,7 +59,7 @@ if (!function_exists('request')) {
  
         $value = app('request')->__get($key);
  
-        return $value === null ? \Tests\Fakes\Support::value($default) : $value;
+        return $value === null ? Support::value($default) : $value;
     }
 }
  
