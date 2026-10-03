@@ -10,9 +10,12 @@ use LaravelFaked\Http\Lifecycle\FakeResponseFactory;
 use LaravelFaked\Core\Component\FakeConfig;
 use LaravelFaked\Core\Component\Utility\FakeSessionStore;
 use LaravelFaked\Core\Component\Utility\FakeEventDispatcher;
-use LaravelFaked\Core\Component\Utility\FakeAuthManager;
+use LaravelFaked\Core\Component\Auth\FakeAuthManager;
+use LaravelFaked\Core\Component\Cache\FakeCacheRepository;
+use LaravelFaked\Core\Component\Cache\FakeCacheManager;
 
 use LaravelFaked\Http\Routing\FakeRedirector;
+use LaravelFaked\Http\Routing\FakeRouter;
 
 use LaravelFaked\DataSource\FakeModel;
 
@@ -34,6 +37,9 @@ final class FakeLaravel
         'events' => ['Illuminate\\Events\\Dispatcher', 'Illuminate\\Contracts\\Events\\Dispatcher', FakeEventDispatcher::class],
         'redirect' => ['Illuminate\\Routing\\Redirector', FakeRedirector::class],
         'response.factory' => ['Illuminate\\Routing\\ResponseFactory', 'Illuminate\\Contracts\\Routing\\ResponseFactory', FakeResponseFactory::class],
+        'router' => ['Illuminate\\Routing\\Router', 'Illuminate\\Contracts\\Routing\\Registrar', 'Illuminate\\Contracts\\Routing\\BindingRegistrar', FakeRouter::class],
+        'cache' => ['Illuminate\\Cache\\CacheManager', 'Illuminate\\Contracts\\Cache\\Factory', FakeCacheManager::class],
+        'cache.store' => ['Illuminate\\Cache\\Repository', 'Illuminate\\Contracts\\Cache\\Repository', FakeCacheRepository::class],
         'app' => ['Illuminate\\Foundation\\Application', 'Illuminate\\Contracts\\Container\\Container', 'Illuminate\\Contracts\\Foundation\\Application', FakeApplication::class],
     ];
  
@@ -48,14 +54,25 @@ final class FakeLaravel
         array $extraConfig = [],
     ): FakeApplication {
         FakeModel::flushStore();
+        FakeCacheRepository::resetClock();
  
         $app = new FakeApplication('testing');
         FakeApplication::setInstance($app);
  
         $app->instance('app', $app);
         $app->instance('config', new FakeConfig(array_replace_recursive(
-            ['app' => ['env' => 'testing', 'url' => 'http://localhost'], 'cache' => [], 'session' => [], 'cookie' => [], $configNamespace => $packageConfig],
-            $extraConfig,
+          [
+            'app' => ['env' => 'testing', 'url' => 'http://localhost'],
+            'cache' => [
+                'default' => 'array',
+                'stores' => ['array' => ['driver' => 'array'],
+                'null' => ['driver' => 'null']
+            ],
+            'session' => [],
+            'cookie' => [],
+            $configNamespace => $packageConfig
+          ],
+          $extraConfig,
         )));
         $app->instance('events', new FakeEventDispatcher($app));
  
@@ -74,6 +91,9 @@ final class FakeLaravel
  
         $app->instance('redirect', new FakeRedirector($app));
         $app->instance('response.factory', new FakeResponseFactory($app));
+        $app->instance('router', new FakeRouter($app));
+        $app->instance('cache', new FakeCacheManager($app));
+        $app->bind('cache.store', fn (FakeApplication $app) => $app->make('cache')->store());
  
         foreach (self::ALIASES as $abstract => $aliases) {
             foreach ($aliases as $alias) {
@@ -99,6 +119,7 @@ final class FakeLaravel
     public static function reset(): void
     {
         FakeModel::flushStore();
+        FakeCacheRepository::resetClock();
         FakeApplication::setInstance(null);
     }
 }
