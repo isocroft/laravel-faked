@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelFaked\Http\Lifecycle\FakeHttpException;
+namespace LaravelFaked\Http\Lifecycle;
 
 use LaravelFaked\Http\Lifecycle\Concerns\FakeResponse;
 
