@@ -209,6 +209,30 @@ trait InteractsWithFakeLaravel
  
         $this->assertTrue(true);
     }
+
+    public function assertHas(string $key, mixed $value = null): static
+    {
+        $actual = $this->app->make('cache')->retrieve($key);
+ 
+        if ($actual === null) {
+            $this->fail("Cache store [{$this->app->make('cache')->name}] is missing key [{$key}].");
+        }
+ 
+        if (func_num_args() > 1 && $actual != $value) {
+            $this->fail("Cache key [{$key}] does not match the expected value.");
+        }
+ 
+        return $this->assertTrue(true);
+    }
+ 
+    public function assertMissing(string $key): static
+    {
+        if ($this->app->make('cache')->retrieve($key) !== null) {
+            $this->fail("Cache store [{$this->app->make('cache')->name}] unexpectedly has key [{$key}].");
+        }
+ 
+        return $this->assertTrue(true);
+    }
 }
 
 ?>
