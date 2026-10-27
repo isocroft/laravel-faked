@@ -24,6 +24,7 @@ require_once __DIR__ . '/Core/Component/Cache/FakeCacheRepository.php';
 require_once __DIR__ . '/Core/Component/Foundation/FakeApplication.php';
 require_once __DIR__ . '/Core/Component/Foundation/InteractsWithFakeLaravel.php';
 require_once __DIR__ . '/DataSource/FakeModel.php';
+require_once __DIR__ . '/DataSource/FakeModelNotFoundException.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeHeaderBag.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeParameterBag.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeHttpException.php';
@@ -33,6 +34,7 @@ require_once __DIR__ . '/Http/Lifecycle/FakeJsonRespose.php';
 require_once __DIR__ . '/Http/Lifecycle/FakeRedirectResponse.php';
 require_once __DIR__ . '/Http/Routing/FakeResponseFactory.php';
 require_once __DIR__ . '/Http/Routing/FakeRedirector.php';
+require_once __DIR__ . '/Http/Routing/FakeRouteRegistrar.php';
 require_once __DIR__ . '/Http/Routing/FakeRouter.php';
 require_once __DIR__ . '/Http/Routing/FakeRoute.php';
 require_once __DIR__ . '/Core/Component/Foundation/FakeLaravel.php';
@@ -48,6 +50,10 @@ if (!class_exists('Illuminate\\Routing\\ResponseFactory', false)) {
 
 if (!class_exists('Illuminate\\Routing\\Route', false)) {
     class_alias(FakeRoute::class, 'Illuminate\\Routing\\Route');
+}
+
+if (!class_exists('Illuminate\\Routing\\RouteRegistrar', false)) {
+    class_alias(FakeRouteRegistrar::class, 'Illuminate\\Routing\\RouteRegistrar');
 }
 
 if (!class_exists('Illuminate\\Http\\RedirectResponse', false)) {
@@ -92,6 +98,10 @@ if (!class_exists('Illuminate\\Session\\Store', false)) {
 
 if (!class_exists('Illuminate\\Database\\Eloquent\\Model', false)) {
     class_alias(FakeModel::class, 'Illuminate\\Database\\Eloquent\\Model');
+}
+
+if (!class_exists('Illuminate\\Database\\Eloquent\ModelNotFoundException', false)) {
+    class_alias(FakeModelNotFoundException::class, 'Illuminate\\Database\\Eloquent\ModelNotFoundException');
 }
 
 if (!class_exists('Illuminate\\Routing\\Router', false)) {
