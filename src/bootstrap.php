@@ -21,6 +21,8 @@ require_once __DIR__ . '/Core/Component/Auth/FakeGuard.php';
 require_once __DIR__ . '/Core/Component/Auth/FakeAuthManager.php';
 require_once __DIR__ . '/Core/Component/Cache/FakeCacheManager.php';
 require_once __DIR__ . '/Core/Component/Cache/FakeCacheRepository.php';
+require_once __DIR__ . '/Core/Component/Cache/FakeLock.php';
+require_once __DIR__ . '/Core/Component/Cache/FakeLockTimeoutException.php';
 require_once __DIR__ . '/Core/Component/Foundation/FakeApplication.php';
 require_once __DIR__ . '/Core/Component/Foundation/InteractsWithFakeLaravel.php';
 require_once __DIR__ . '/DataSource/FakeModel.php';
@@ -78,6 +80,10 @@ if (!class_exists('Illuminate\\Auth\\SessionGuard', false)) {
 
 if (!class_exists('Illuminate\\Auth\\AuthManager', false)) {
     class_alias(FakeAuthManager::class, 'Illuminate\\Auth\\AuthManager');
+}
+
+if (!class_exists('Illuminate\\Cache\\ArrayLock', false)) {
+    class_alias(FakeLock::class, 'Illuminate\\Cache\\ArrayLock');
 }
 
 if (!class_exists('Illuminate\\Cache\\CacheManager', false)) {
