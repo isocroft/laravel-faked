@@ -60,8 +60,8 @@ if (!class_exists('Illuminate\\Http\\RedirectResponse', false)) {
     class_alias(FakeRedirectResponse::class, 'Illuminate\\Http\\RedirectResponse');
 }
 
-if (!class_exists('Illuminate\\Http\JsonResponse', false)) {
-    class_alias(FakeJsonResponse::class, 'Illuminate\\Http\JsonResponse');
+if (!class_exists('Illuminate\\Http\\JsonResponse', false)) {
+    class_alias(FakeJsonResponse::class, 'Illuminate\\Http\\JsonResponse');
 }
 
 if (!class_exists('Illuminate\\Http\\Response', false)) {
@@ -100,8 +100,8 @@ if (!class_exists('Illuminate\\Database\\Eloquent\\Model', false)) {
     class_alias(FakeModel::class, 'Illuminate\\Database\\Eloquent\\Model');
 }
 
-if (!class_exists('Illuminate\\Database\\Eloquent\ModelNotFoundException', false)) {
-    class_alias(FakeModelNotFoundException::class, 'Illuminate\\Database\\Eloquent\ModelNotFoundException');
+if (!class_exists('Illuminate\\Database\\Eloquent\\ModelNotFoundException', false)) {
+    class_alias(FakeModelNotFoundException::class, 'Illuminate\\Database\\Eloquent\\ModelNotFoundException');
 }
 
 if (!class_exists('Illuminate\\Routing\\Router', false)) {
