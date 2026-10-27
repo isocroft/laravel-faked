@@ -2,18 +2,15 @@
  
 declare(strict_types=1);
  
-namespace Tests\Fakes;
+namespace LaravelFaked\DataSource;
 
 use LaravelFaked\Core\Foundation\FakeApplication;
 
 use LaravelFaked\Helpers\Support;
  
-class FakeModelNotFoundException extends \RuntimeException
-{
-    //
-}
- 
 /**
+ * Stand-in for Illuminate\Database\Eloquent\Model.
+ *
  * Eloquent look-alike backed by a static in-memory "table" per model class.
  * Covers attributes/casts/fillable/hidden, dirty tracking, save/delete/find,
  * model events (via the fake dispatcher), serialization, and ArrayAccess.
