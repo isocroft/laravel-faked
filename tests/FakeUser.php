@@ -17,8 +17,6 @@ class FakeUser extends FakeModel
     ];
     protected array $attributes = [];
  
-    /* ---- Illuminate\Contracts\Auth\Authenticatable ----------------------- */
- 
     public function getAuthIdentifierName(): string
     {
         return $this->getKeyName();
@@ -68,7 +66,7 @@ class FakeUser extends FakeModel
         return $this->save();
     }
  
-    /* ---- package-specific API (from the original stubs) ------------------ */
+    /** package-specific API (from the original stubs) --- */
  
     public function getTableName(): string
     {
