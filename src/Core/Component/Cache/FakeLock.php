@@ -3,10 +3,7 @@
 declare(strict_types=1);
  
 namespace LaravelFaked\Core\Component\Cache;
- 
-class FakeLockTimeoutException extends \RuntimeException
-{
-}
+
 
 /** Stand-in for Illuminate\Cache\ArrayLock. block() never waits: time only moves via travel(). */
 class FakeLock
