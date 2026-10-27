@@ -281,7 +281,7 @@ final class CoreTest extends TestCase
         cache()->store();
         $this->assertMissing('hits');
  
-        app('events')->assertDispatched('Illuminate\\Cache\\Events\\CacheHit', fn (array $e) => $e['key'] === 'k');
+        $this->assertDispatched('Illuminate\\Cache\\Events\\CacheHit', fn (array $e) => $e['key'] === 'k');
         $this->assertInstanceOf(FakeCacheRepository::class, app('cache.store'));
     }
  
