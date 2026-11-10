@@ -65,7 +65,7 @@ trait InteractsWithFakeLaravel
         $this->assertTrue(true);
     }
 
-    /* ---- test assertions: eevents ------------------------------------------------- */
+    /* ---- test assertions: events ------------------------------------------------- */
 
     public function assertDispatched(string $event, callable|int|null $callback = null): void
     {
@@ -115,7 +115,7 @@ trait InteractsWithFakeLaravel
 
     /* ---- test assertions: response ------------------------------------------------- */
  
-    public function assertStatus(FakeResponse $response, int $status): static
+    public function assertStatus(FakeResponse $response, int $status): void
     {
         $statusCode = $response->getStatusCode();
         
@@ -126,27 +126,27 @@ trait InteractsWithFakeLaravel
         $this->assertTrue(true);
     }
  
-    public function assertOk(FakeResponse $response): static
+    public function assertOk(FakeResponse $response): void
     {
-        return $this->assertStatus($response, 200);
+        $this->assertStatus($response, 200);
     }
  
-    public function assertUnauthorized(FakeResponse $response): static
+    public function assertUnauthorized(FakeResponse $response): void
     {
-        return $this->assertStatus($response, 401);
+        $this->assertStatus($response, 401);
     }
  
-    public function assertForbidden(FakeResponse $response): static
+    public function assertForbidden(FakeResponse $response): void
     {
-        return $this->assertStatus($response, 403);
+        $this->assertStatus($response, 403);
     }
  
-    public function assertNotFound(FakeResponse $response): static
+    public function assertNotFound(FakeResponse $response): void
     {
-        return $this->assertStatus($response, 404);
+        $this->assertStatus($response, 404);
     }
  
-    public function assertHeader(FakeResponse $response, string $name, ?string $value = null): static
+    public function assertHeader(FakeResponse $response, string $name, ?string $value = null): void
     {
         if (!$response->headers->has($name)) {
             $this->fail("Header [{$name}] not present on response.");
@@ -161,7 +161,7 @@ trait InteractsWithFakeLaravel
         $this->assertTrue(true);
     }
  
-    public function assertSee(FakeResponse $response, string $value): static
+    public function assertSee(FakeResponse $response, string $value): void
     {
         if (!str_contains($response->getContent(), $value)) {
             $this->fail("Failed asserting that the response contains [{$value}].");
@@ -222,7 +222,7 @@ trait InteractsWithFakeLaravel
             $this->fail("Cache key [{$key}] does not match the expected value.");
         }
  
-        return $this->assertTrue(true);
+        $this->assertTrue(true);
     }
  
     public function assertMissing(string $key): static
@@ -231,7 +231,7 @@ trait InteractsWithFakeLaravel
             $this->fail("Cache store [{$this->app->make('cache')->name}] unexpectedly has key [{$key}].");
         }
  
-        return $this->assertTrue(true);
+        $this->assertTrue(true);
     }
 }
 
